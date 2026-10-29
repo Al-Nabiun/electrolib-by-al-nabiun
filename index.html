@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElectroLib - Open-Source Electronics Component Database by Al-Nabiun</title>
+  
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+              accent: '#38bdf8'
+            },
+            lab: {
+              bgDark: '#090d16',
+              cardDark: '#111827',
+              borderDark: '#1e293b',
+              accentCyan: '#06b6d4'
+            }
+          },
+          fontFamily: {
+            mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .bg-grid-pattern {
+      background-image: radial-gradient(circle, rgba(56, 189, 248, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .light .bg-grid-pattern {
+      background-image: radial-gradient(circle, rgba(15, 23, 42, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    .light ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+  </style>
+</head>
+<body class="bg-lab-bgDark text-slate-100 font-sans antialiased selection:bg-brand-500 selection:text-white transition-colors duration-200">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // --- COMPREHENSIVE VERIFIED COMPONENT DATASET ---
+    const FULL_DATASET = [
+      {
+        id: "bc547",
+        partNumber: "BC547",
+        name: "General Purpose NPN BJT Transistor",
+        category: "Transistors",
+        manufacturer: "NXP / ON Semi / Fairchild",
+        package: "TO-92",
+        status: "Verified",
+        pinsCount: 3,
+        description: "Standard low-power NPN bipolar junction transistor designed for small-signal amplification, low-frequency audio, and high-speed logic switching.",
+        tags: ["NPN", "Transistor", "Switch", "Amplifier", "BJT", "TO-92"],
+        datasheetUrl: "https://www.onsemi.com/pdf/datasheet/bc546-d.pdf",
+        verifiedDate: "2026-03-15",
+        specs: {
+          vceoMax: "45 V",
+          vcboMax: "50 V",
+          veboMax: "6 V",
+          icMax: "100 mA",
+          icPeak: "200 mA",
+          powerMax: "500 mW",
+          hfe: "110 - 800 (A/B/C variants)",
+          ft: "300 MHz",
+          vceSat: "0.25 V @ 10mA",
+          operatingTemp: "-65 to +150 °C"
+        },
+        pins: [
+          { number: 1, name: "C", label: "Collector", type: "Output", notes: "Connects to positive supply load" },
+          { number: 2, name: "B", label: "Base", type: "Input", notes: "Control input terminal (Requires series base resistor)" },
+          { number: 3, name: "E", label: "Emitter", type: "Ground/Ref", notes: "Connects to common ground or negative reference" }
+        ],
+        applications: ["Low-power switching", "Audio pre-amplifier stages", "Relay driving", "Sensor amplification"],
+        alternatives: ["2N2222", "2N3904", "BC548", "BC549", "PN2222"]
+      },
+      {
+        id: "2n2222",
+        partNumber: "2N2222",
+        name: "High-Current Fast Switching NPN BJT",
+        category: "Transistors",
+        manufacturer: "Microchip / ON Semi",
+        package: "TO-18 / TO-92",
+        status: "Verified",
+        pinsCount: 3,
+        description: "Ubiquitous NPN transistor engineered for high-speed switching and power amplification up to 800 mA continuous collector current.",
+        tags: ["NPN", "BJT", "High-Current", "Switching", "TO-92"],
+        datasheetUrl: "https://www.onsemi.com/pdf/datasheet/p2n2222a-d.pdf",
+        verifiedDate: "2026-03-10",
+        specs: {
+          vceoMax: "40 V",
+          vcboMax: "75 V",
+          veboMax: "6 V",
+          icMax: "800 mA",
+          powerMax: "625 mW",
+          hfe: "100 - 300",
+          ft: "300 MHz",
+          vceSat: "0.3 V @ 150mA",
+          operatingTemp: "-65 to +150 °C"
+        },
+        pins: [
+          { number: 1, name: "E", label: "Emitter", type: "Ground/Ref", notes: "Reference pin (TO-92 Pin 1 left view)" },
+          { number: 2, name: "B", label: "Base", type: "Input", notes: "Current trigger input" },
+          { number: 3, name: "C", label: "Collector", type: "Output", notes: "High current load input" }
+        ],
+        applications: ["High-speed medium-power switching", "Solenoid driver", "PWM motor control", "RF transmission"],
+        alternatives: ["BC547", "2N3904", "PN2222A"]
+      },
+      {
+        id: "ne555",
+        partNumber: "NE555",
+        name: "Precision Monolithic Timer IC",
+        category: "ICs",
+        manufacturer: "Texas Instruments / STMicroelectronics",
+        package: "DIP-8",
+        status: "Verified",
+        pinsCount: 8,
+        description: "Industry-standard timing IC capable of creating accurate oscillation waves and microsecond-to-hour time delays in monostable or astable modes.",
+        tags: ["Timer", "Astable", "Monostable", "PWM", "Oscillator", "DIP-8"],
+        datasheetUrl: "https://www.ti.com/lit/ds/symlink/ne555.pdf",
+        verifiedDate: "2026-03-20",
+        specs: {
+          vccMin: "4.5 V",
+          vccMax: "16 V",
+          maxCurrent: "200 mA (Sink/Source)",
+          timingRange: "Microseconds to hours",
+          operatingTemp: "0 to +70 °C",
+          powerMax: "600 mW",
+          frequencyMax: "500 kHz"
+        },
+        pins: [
+          { number: 1, name: "GND", label: "Ground", type: "Power", notes: "0V Reference ground" },
+          { number: 2, name: "TRIG", label: "Trigger", type: "Input", notes: "Initiates timing pulse when < 1/3 VCC" },
+          { number: 3, name: "OUT", label: "Output", type: "Output", notes: "High/Low output pulse up to 200mA" },
+          { number: 4, name: "RESET", label: "Reset", type: "Input", notes: "Resets timing logic when pulled LOW" },
+          { number: 5, name: "CTRL", label: "Control Voltage", type: "Analog", notes: "Modulates threshold levels (Optional 10nF cap to GND)" },
+          { number: 6, name: "THRESH", label: "Threshold", type: "Input", notes: "Ends timing pulse when > 2/3 VCC" },
+          { number: 7, name: "DISCH", label: "Discharge", type: "Open Collector", notes: "Discharges external timing capacitor C1" },
+          { number: 8, name: "VCC", label: "Supply Voltage", type: "Power", notes: "+4.5V to +16V Main power rail" }
+        ],
+        applications: ["Pulse Width Modulation (PWM)", "LED Blinkers & Flashers", "Clock signal generation", "Tone generators"],
+        alternatives: ["LM555", "TLC555", "ICM7555"]
+      },
+      {
+        id: "lm7805",
+        partNumber: "LM7805",
+        name: "+5V Positive Linear Voltage Regulator",
+        category: "Voltage Regulators",
+        manufacturer: "STMicroelectronics / Texas Instruments",
+        package: "TO-220",
+        status: "Verified",
+        pinsCount: 3,
+        description: "3-terminal positive voltage regulator designed to deliver a steady, low-noise regulated +5.0V output rail at up to 1.5A.",
+        tags: ["Regulator", "5V", "Linear", "Power", "TO-220"],
+        datasheetUrl: "https://www.st.com/resource/en/datasheet/l78.pdf",
+        verifiedDate: "2026-03-01",
+        specs: {
+          outputVoltage: "5.0 V ± 4%",
+          vinMin: "7.0 V",
+          vinMax: "35.0 V",
+          outputCurrent: "1.5 A (with adequate heatsink)",
+          dropoutVoltage: "2.0 V @ 1A",
+          quiescentCurrent: "4.2 mA",
+          operatingTemp: "0 to +125 °C"
+        },
+        pins: [
+          { number: 1, name: "IN", label: "Input Voltage", type: "Power In", notes: "Unregulated input (+7V to +35V DC)" },
+          { number: 2, name: "GND", label: "Ground", type: "Power", notes: "Common ground reference and heatsink tab" },
+          { number: 3, name: "OUT", label: "Output Voltage", type: "Power Out", notes: "Regulated +5.0V output supply rail" }
+        ],
+        applications: ["5V Logic Power Supply", "Microcontroller power rails", "Sensor power conditioning"],
+        alternatives: ["AMS1117-5.0", "LM317", "L7805CV", "L78M05"]
+      },
+      {
+        id: "irfz44n",
+        partNumber: "IRFZ44N",
+        name: "55V 49A Single N-Channel HEXFET Power MOSFET",
+        category: "MOSFETs",
+        manufacturer: "Infineon / International Rectifier",
+        package: "TO-220",
+        status: "Verified",
+        pinsCount: 3,
+        description: "High-performance N-Channel HEXFET Power MOSFET with ultra-low on-resistance (17.5 mΩ) suited for heavy power switching.",
+        tags: ["MOSFET", "N-Channel", "High-Power", "Switch", "TO-220"],
+        datasheetUrl: "https://www.infineon.com/dgdl/irfz44n.pdf",
+        verifiedDate: "2026-03-12",
+        specs: {
+          vdsMax: "55 V",
+          idContinuous: "49 A",
+          rdsOn: "17.5 mΩ @ Vgs=10V",
+          vgsTh: "2.0 V to 4.0 V",
+          vgsMax: "±20 V",
+          powerMax: "94 W",
+          operatingTemp: "-55 to +175 °C"
+        },
+        pins: [
+          { number: 1, name: "G", label: "Gate", type: "Input", notes: "Gate voltage control pin (Logic/10V driven)" },
+          { number: 2, name: "D", label: "Drain", type: "Power", notes: "Load current connection (Tab connected)" },
+          { number: 3, name: "S", label: "Source", type: "Ground/Ref", notes: "Ground reference connection" }
+        ],
+        applications: ["DC Motor Speed Controllers", "High-power LED dimmers", "Inverters", "Switch-mode power supplies"],
+        alternatives: ["IRF540N", "IRFZ48N", "STP55NF06", "RLB8721"]
+      },
+      {
+        id: "esp32",
+        partNumber: "ESP32-WROOM-32",
+        name: "Wi-Fi + Bluetooth MCU Module",
+        category: "Microcontrollers",
+        manufacturer: "Espressif Systems",
+        package: "SMD-38",
+        status: "Verified",
+        pinsCount: 38,
+        description: "Versatile 32-bit LX6 dual-core MCU module integrated with Wi-Fi (802.11 b/g/n) and Dual-Mode Bluetooth v4.2 for IoT applications.",
+        tags: ["ESP32", "Microcontroller", "WiFi", "Bluetooth", "IoT", "32-bit"],
+        datasheetUrl: "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf",
+        verifiedDate: "2026-03-18",
+        specs: {
+          cpu: "Tensilica Xtensa 32-bit LX6 Dual-Core @ 240 MHz",
+          operatingVoltage: "3.0 V to 3.6 V",
+          flashMemory: "4 MB SPI Flash",
+          sram: "520 KB SRAM",
+          gpioPins: "32 Usable GPIOs",
+          adc: "12-bit ADC (18 Channels)",
+          operatingTemp: "-40 to +85 °C"
+        },
+        pins: [
+          { number: 1, name: "GND", label: "Ground", type: "Power", notes: "System ground reference" },
+          { number: 2, name: "3V3", label: "3.3V VCC", type: "Power", notes: "Main regulated 3.3V power supply input" },
+          { number: 3, name: "EN", label: "Chip Enable", type: "Input", notes: "Pulled HIGH for normal operation, LOW resets chip" },
+          { number: 25, name: "GPIO21", label: "I2C SDA", type: "I/O", notes: "Default hardware I2C Data line" },
+          { number: 26, name: "GPIO22", label: "I2C SCL", type: "I/O", notes: "Default hardware I2C Clock line" }
+        ],
+        applications: ["Smart Home Controllers", "Wireless Industrial Sensors", "Audio Streaming Devices", "Wearable Electronics"],
+        alternatives: ["ESP8266", "ESP32-S3", "STM32F103C8T6", "RP2040"]
+      },
+      {
+        id: "lm358",
+        partNumber: "LM358",
+        name: "Dual Low-Power Operational Amplifier",
+        category: "Op-Amps",
+        manufacturer: "Texas Instruments / STMicroelectronics",
+        package: "DIP-8",
+        status: "Verified",
+        pinsCount: 8,
+        description: "Dual independent, high-gain, internally frequency-compensated operational amplifier engineered for single-supply DC operational circuits.",
+        tags: ["Op-Amp", "Dual", "Amplifier", "Analog", "DIP-8"],
+        datasheetUrl: "https://www.ti.com/lit/ds/symlink/lm358.pdf",
+        verifiedDate: "2026-03-05",
+        specs: {
+          supplyVoltage: "3V to 32V (Single) / ±1.5V to ±16V (Split)",
+          bandwidth: "1.0 MHz",
+          gain: "100 dB DC Gain",
+          supplyCurrent: "500 µA typical",
+          operatingTemp: "0 to +70 °C"
+        },
+        pins: [
+          { number: 1, name: "OUT1", label: "Output 1", type: "Output", notes: "Op-Amp 1 Output" },
+          { number: 2, name: "IN1-", label: "Inverting 1", type: "Input", notes: "Op-Amp 1 Inverting Input" },
+          { number: 3, name: "IN1+", label: "Non-Inverting 1", type: "Input", notes: "Op-Amp 1 Non-Inverting Input" },
+          { number: 4, name: "GND", label: "Ground / V-", type: "Power", notes: "Ground or negative supply rail" },
+          { number: 5, name: "IN2+", label: "Non-Inverting 2", type: "Input", notes: "Op-Amp 2 Non-Inverting Input" },
+          { number: 6, name: "IN2-", label: "Inverting 2", type: "Input", notes: "Op-Amp 2 Inverting Input" },
+          { number: 7, name: "OUT2", label: "Output 2", type: "Output", notes: "Op-Amp 2 Output" },
+          { number: 8, name: "VCC", label: "V+ Supply", type: "Power", notes: "Positive power supply input" }
+        ],
+        applications: ["Transducer Amplifiers", "DC Gain Blocks", "Active Analog Filters", "Comparator Circuits"],
+        alternatives: ["NE5532", "TL072", "MCP6002", "LM324"]
+      },
+      {
+        id: "1n4007",
+        partNumber: "1N4007",
+        name: "1000V 1A Standard Rectifier Diode",
+        category: "Diodes",
+        manufacturer: "Vishay / Diodes Inc.",
+        package: "DO-41",
+        status: "Verified",
+        pinsCount: 2,
+        description: "Universal silicon rectifier diode rated for up to 1000V peak inverse voltage with 1A forward continuous current capacity.",
+        tags: ["Diode", "Rectifier", "Power", "Flyback", "DO-41"],
+        datasheetUrl: "https://www.vishay.com/docs/88503/1n4001.pdf",
+        verifiedDate: "2026-02-28",
+        specs: {
+          vrrmMax: "1000 V",
+          ifAverage: "1.0 A",
+          vfMax: "1.1 V @ 1A",
+          irMax: "5.0 µA",
+          operatingTemp: "-55 to +175 °C"
+        },
+        pins: [
+          { number: 1, name: "A", label: "Anode", type: "Input", notes: "Positive terminal (Unbanded end)" },
+          { number: 2, name: "K", label: "Cathode", type: "Output", notes: "Negative terminal (Marked by silver stripe band)" }
+        ],
+        applications: ["AC-to-DC Bridge Rectifiers", "Reverse polarity protection", "Inductive flyback diode"],
+        alternatives: ["1N4001", "1N5408", "UF4007", "1N4148"]
+      },
+      {
+        id: "uln2003a",
+        partNumber: "ULN2003A",
+        name: "7-Channel High-Voltage Darlington Transistor Array",
+        category: "Motor Drivers",
+        manufacturer: "Texas Instruments / STMicroelectronics",
+        package: "DIP-16",
+        status: "Verified",
+        pinsCount: 16,
+        description: "Array of seven NPN Darlington pairs with open-collector outputs and integrated suppressor diodes for inductive load switching.",
+        tags: ["Darlington", "Driver", "Relay", "Stepper", "Array", "DIP-16"],
+        datasheetUrl: "https://www.ti.com/lit/ds/symlink/uln2003a.pdf",
+        verifiedDate: "2026-03-08",
+        specs: {
+          outputVoltageMax: "50 V",
+          collectorCurrentMax: "500 mA per channel",
+          inputVoltageMax: "30 V",
+          operatingTemp: "-20 to +85 °C"
+        },
+        pins: [
+          { number: 1, name: "IN1", label: "Input 1", type: "Input", notes: "Base input channel 1" },
+          { number: 8, name: "GND", label: "Ground", type: "Power", notes: "Common emitter return pin" },
+          { number: 9, name: "COM", label: "Common Free-Wheel", type: "Power", notes: "Flyback clamp diode cathode rail" },
+          { number: 16, name: "OUT1", label: "Output 1", type: "Output", notes: "Open collector channel 1" }
+        ],
+        applications: ["28BYJ-48 Stepper Motor Driver", "Multi-relay control bank", "LED matrix driver"],
+        alternatives: ["ULN2803A", "ULN2004A"]
+      },
+      {
+        id: "l293d",
+        partNumber: "L293D",
+        name: "Quadruple Half-H Drivers Dual Motor IC",
+        category: "Motor Drivers",
+        manufacturer: "STMicroelectronics / Texas Instruments",
+        package: "DIP-16",
+        status: "Verified",
+        pinsCount: 16,
+        description: "Monolithic high-voltage, high-current dual H-Bridge driver designed to provide bidirectional drive currents up to 600mA at voltages up to 36V.",
+        tags: ["H-Bridge", "Motor Driver", "Robotics", "DIP-16"],
+        datasheetUrl: "https://www.st.com/resource/en/datasheet/l293.pdf",
+        verifiedDate: "2026-03-14",
+        specs: {
+          supplyVoltageVcc1: "4.5 V to 7 V (Logic rail)",
+          supplyVoltageVcc2: "Vcc1 to 36 V (Motor supply)",
+          outputCurrent: "600 mA continuous per channel",
+          peakCurrent: "1.2 A non-repetitive",
+          operatingTemp: "0 to +70 °C"
+        },
+        pins: [
+          { number: 1, name: "EN1,2", label: "Enable 1/2", type: "Control", notes: "HIGH enables outputs 1 & 2" },
+          { number: 2, name: "IN1", label: "Input 1", type: "Input", notes: "Logic control pin for Out 1" },
+          { number: 3, name: "OUT1", label: "Output 1", type: "Output", notes: "Motor connection lead 1" },
+          { number: 4, name: "GND", label: "Ground", type: "Power", notes: "Heat-sink and ground pin" },
+          { number: 8, name: "VC", label: "Motor Power VCC2", type: "Power", notes: "Motor supply rail (+5V to +36V)" },
+          { number: 16, name: "VCC1", label: "Logic Power", type: "Power", notes: "+5V logic power supply" }
+        ],
+        applications: ["Bi-directional DC Motors", "Bipolar Stepper Motors", "Relay array driver"],
+        alternatives: ["SN754410", "TB6612FNG", "L298N"]
+      },
+      {
+        id: "2n7000",
+        partNumber: "2N7000",
+        name: "60V 200mA N-Channel Enhancement Mode MOSFET",
+        category: "MOSFETs",
+        manufacturer: "ON Semiconductor / Microchip",
+        package: "TO-92",
+        status: "Verified",
+        pinsCount: 3,
+        description: "Low-threshold N-Channel field-effect transistor engineered for small-signal logic switching and low-voltage control.",
+        tags: ["MOSFET", "N-Channel", "Small-Signal", "TO-92"],
+        datasheetUrl: "https://www.onsemi.com/pdf/datasheet/2n7000-d.pdf",
+        verifiedDate: "2026-03-02",
+        specs: {
+          vdsMax: "60 V",
+          idContinuous: "200 mA",
+          rdsOn: "5.0 Ω @ Vgs=10V",
+          vgsTh: "0.8 V to 3.0 V",
+          operatingTemp: "-55 to +150 °C"
+        },
+        pins: [
+          { number: 1, name: "S", label: "Source", type: "Ground/Ref", notes: "Source reference terminal" },
+          { number: 2, name: "G", label: "Gate", type: "Input", notes: "Control gate input" },
+          { number: 3, name: "D", label: "Drain", type: "Output", notes: "Drain load output terminal" }
+        ],
+        applications: ["Logic level shifting", "High-speed low-current switching", "Bus line driver"],
+        alternatives: ["BS170", "BSS138", "2N7002"]
+      },
+      {
+        id: "1n4148",
+        partNumber: "1N4148",
+        name: "High-Speed Small Signal Switching Diode",
+        category: "Diodes",
+        manufacturer: "Vishay / ON Semi",
+        package: "DO-35",
+        status: "Verified",
+        pinsCount: 2,
+        description: "Standard high-speed switching diode featuring ultra-fast reverse recovery time (4ns) for high-frequency signal processing.",
+        tags: ["Diode", "High-Speed", "Switching", "Signal", "DO-35"],
+        datasheetUrl: "https://www.visay.com/docs/81857/1n4148.pdf",
+        verifiedDate: "2026-02-25",
+        specs: {
+          vrrmMax: "100 V",
+          ifAverage: "300 mA",
+          trrMax: "4.0 ns",
+          vfMax: "1.0 V @ 10mA",
+          operatingTemp: "-65 to +175 °C"
+        },
+        pins: [
+          { number: 1, name: "A", label: "Anode", type: "Input", notes: "Positive terminal" },
+          { number: 2, name: "K", label: "Cathode", type: "Output", notes: "Marked by black band" }
+        ],
+        applications: ["High-speed signal clipping", "Waveform shaping", "Logic OR gates", "Flyback suppression"],
+        alternatives: ["1N914", "1N4448", "BAS16"]
+      },
+      {
+        id: "pc817",
+        partNumber: "PC817",
+        name: "General Purpose Photocoupler Optoisolator",
+        category: "Optocouplers",
+        manufacturer: "Sharp / Lite-On",
+        package: "DIP-4",
+        status: "Verified",
+        pinsCount: 4,
+        description: "Optically coupled isolator consisting of an infrared emitting diode coupled to an NPN phototransistor in a 4-pin DIP package.",
+        tags: ["Optocoupler", "Isolator", "Phototransistor", "DIP-4"],
+        datasheetUrl: "https://sharp-world.com/products/device/lineup/data/pdf/datasheet/pc817x_e.pdf",
+        verifiedDate: "2026-03-11",
+        specs: {
+          isolationVoltage: "5000 Vrms",
+          vceoMax: "80 V",
+          collectorCurrent: "50 mA",
+          ctrRange: "50% to 600%",
+          operatingTemp: "-30 to +100 °C"
+        },
+        pins: [
+          { number: 1, name: "Anode", label: "IR LED (+)", type: "Input", notes: "Anode terminal of IR LED" },
+          { number: 2, name: "Cathode", label: "IR LED (-)", type: "Input", notes: "Cathode terminal of IR LED" },
+          { number: 3, name: "Emitter", label: "Photo Transistor (E)", type: "Output", notes: "Emitter output" },
+          { number: 4, name: "Collector", label: "Photo Transistor (C)", type: "Output", notes: "Collector output" }
+        ],
+        applications: ["High-voltage galvanic isolation", "Switch-mode power supply feedback", "Microcontroller noise protection"],
+        alternatives: ["4N25", "MOC3021", "EL817", "LTV-817"]
+      },
+      {
+        id: "74hc595",
+        partNumber: "74HC595",
+        name: "8-Bit Serial-In / Parallel-Out Shift Register with Output Latches",
+        category: "Shift Registers",
+        manufacturer: "Nexperia / Texas Instruments",
+        package: "DIP-16",
+        status: "Verified",
+        pinsCount: 16,
+        description: "High-speed CMOS 8-bit serial-in, parallel-out shift register with 3-state output storage register. Expands microcontroller GPIO outputs using 3 SPI lines.",
+        tags: ["Shift Register", "74HC595", "SIPO", "GPIO Expander", "DIP-16", "Logic"],
+        datasheetUrl: "https://www.ti.com/lit/ds/symlink/sn74hc595.pdf",
+        verifiedDate: "2026-03-25",
+        specs: {
+          vccMinMax: "2.0 V to 6.0 V",
+          maxClockFreq: "100 MHz (@ 6V)",
+          outputCurrent: "±35 mA per pin",
+          propDelay: "14 ns (typical)",
+          operatingTemp: "-40 to +125 °C"
+        },
+        pins: [
+          { number: 1, name: "Q1", label: "Parallel Out 1", type: "Output", notes: "Data output bit 1" },
+          { number: 2, name: "Q2", label: "Parallel Out 2", type: "Output", notes: "Data output bit 2" },
+          { number: 3, name: "Q3", label: "Parallel Out 3", type: "Output", notes: "Data output bit 3" },
+          { number: 4, name: "Q4", label: "Parallel Out 4", type: "Output", notes: "Data output bit 4" },
+          { number: 5, name: "Q5", label: "Parallel Out 5", type: "Output", notes: "Data output bit 5" },
+          { number: 6, name: "Q6", label: "Parallel Out 6", type: "Output", notes: "Data output bit 6" },
+          { number: 7, name: "Q7", label: "Parallel Out 7", type: "Output", notes: "Data output bit 7" },
+          { number: 8, name: "GND", label: "Ground", type: "Power", notes: "0V Reference ground" },
+          { number: 9, name: "Q7'", label: "Serial Out", type: "Output", notes: "Serial data output for daisy-chaining" },
+          { number: 10, name: "MR", label: "Master Reset", type: "Input", notes: "Active LOW shift register reset (Connect to VCC if unused)" },
+          { number: 11, name: "SH_CP", label: "Shift Clock", type: "Input", notes: "Shift Register Clock Input (SRCLK)" },
+          { number: 12, name: "ST_CP", label: "Latch Clock", type: "Input", notes: "Storage Register Clock Input (RCLK)" },
+          { number: 13, name: "OE", label: "Output Enable", type: "Input", notes: "Active LOW output enable (GND = outputs active)" },
+          { number: 14, name: "DS", label: "Serial Data", type: "Input", notes: "Serial Data Input (SER)" },
+          { number: 15, name: "Q0", label: "Parallel Out 0", type: "Output", notes: "Data output bit 0" },
+          { number: 16, name: "VCC", label: "Supply Voltage", type: "Power", notes: "+2V to +6V Power rail" }
+        ],
+        applications: ["Driving 7-segment LED displays", "Expanding Arduino/ESP32 digital outputs", "LED Matrix multiplexing", "Relay array driving"],
+        alternatives: ["CD4094", "74HCT595", "TPIC6B595"]
+      },
+      {
+        id: "74hc165",
+        partNumber: "74HC165",
+        name: "8-Bit Parallel-In / Serial-Out Shift Register",
+        category: "Shift Registers",
+        manufacturer: "Nexperia / Texas Instruments",
+        package: "DIP-16",
+        status: "Verified",
+        pinsCount: 16,
+        description: "High-speed 8-bit parallel-in or serial-in to serial-out shift register. Used to read up to 8 digital inputs using only 3 microcontroller pins.",
+        tags: ["Shift Register", "74HC165", "PISO", "Input Expander", "DIP-16", "Logic"],
+        datasheetUrl: "https://www.ti.com/lit/ds/symlink/sn74hc165.pdf",
+        verifiedDate: "2026-03-24",
+        specs: {
+          vccMinMax: "2.0 V to 6.0 V",
+          maxClockFreq: "56 MHz (@ 5V)",
+          outputCurrent: "±25 mA per pin",
+          propDelay: "15 ns (typical)",
+          operatingTemp: "-40 to +125 °C"
+        },
+        pins: [
+          { number: 1, name: "PL", label: "Parallel Load", type: "Input", notes: "Active LOW parallel load pin" },
+          { number: 2, name: "CP", label: "Clock Pulse", type: "Input", notes: "Shift Clock Input" },
+          { number: 3, name: "D4", label: "Data Input 4", type: "Input", notes: "Parallel input bit 4" },
+          { number: 4, name: "D5", label: "Data Input 5", type: "Input", notes: "Parallel input bit 5" },
+          { number: 5, name: "D6", label: "Data Input 6", type: "Input", notes: "Parallel input bit 6" },
+          { number: 6, name: "D7", label: "Data Input 7", type: "Input", notes: "Parallel input bit 7" },
+          { number: 7, name: "/Q7", label: "Inv Serial Out", type: "Output", notes: "Inverted serial output bit 7" },
+          { number: 8, name: "GND", label: "Ground", type: "Power", notes: "0V Ground reference" },
+          { number: 9, name: "Q7", label: "Serial Out", type: "Output", notes: "Serial output bit 7" },
+          { number: 10, name: "DS", label: "Serial Input", type: "Input", notes: "Serial data in for cascading" },
+          { number: 11, name: "D0", label: "Data Input 0", type: "Input", notes: "Parallel input bit 0" },
+          { number: 12, name: "D1", label: "Data Input 1", type: "Input", notes: "Parallel input bit 1" },
+          { number: 13, name: "D2", label: "Data Input 2", type: "Input", notes: "Parallel input bit 2" },
+          { number: 14, name: "D3", label: "Data Input 3", type: "Input", notes: "Parallel input bit 3" },
+          { number: 15, name: "CE", label: "Clock Enable", type: "Input", notes: "Active LOW clock enable pin" },
+          { number: 16, name: "VCC", label: "Supply Voltage", type: "Power", notes: "+2V to +6V Power rail" }
+        ],
+        applications: ["Reading multiple DIP switches or buttons", "Keypad matrix scanning", "Microcontroller input pin expansion"],
+        alternatives: ["CD4021B", "74HCT165"]
+      },
+      {
+        id: "cd4094",
+        partNumber: "CD4094",
+        name: "8-Stage Shift and Store Bus Register",
+        category: "Shift Registers",
+        manufacturer: "Texas Instruments / STMicroelectronics",
+        package: "DIP-16",
+        status: "Verified",
+        pinsCount: 16,
+        description: "CMOS 8-stage serial shift register with latch storage and 3-state parallel outputs, designed for high voltage (3V-18V) bus driving.",
+        tags: ["Shift Register", "CD4094", "CMOS", "High Voltage", "DIP-16"],
+        datasheetUrl: "https://www.ti.com/lit/ds/symlink/cd4094b.pdf",
+        verifiedDate: "2026-03-22",
+        specs: {
+          vccMinMax: "3.0 V to 18.0 V",
+          maxClockFreq: "5 MHz (@ 10V)",
+          outputCurrent: "±10 mA per pin",
+          operatingTemp: "-55 to +125 °C"
+        },
+        pins: [
+          { number: 1, name: "STROBE", label: "Latch Strobe", type: "Input", notes: "Transfers data from shift to latch when HIGH" },
+          { number: 2, name: "DATA", label: "Serial Data In", type: "Input", notes: "Serial input pin" },
+          { number: 3, name: "CLOCK", label: "Shift Clock", type: "Input", notes: "Clock input" },
+          { number: 4, name: "Q1", label: "Parallel Out 1", type: "Output", notes: "Parallel output bit 1" },
+          { number: 5, name: "Q2", label: "Parallel Out 2", type: "Output", notes: "Parallel output bit 2" },
+          { number: 6, name: "Q3", label: "Parallel Out 3", type: "Output", notes: "Parallel output bit 3" },
+          { number: 7, name: "Q4", label: "Parallel Out 4", type: "Output", notes: "Parallel output bit 4" },
+          { number: 8, name: "VSS", label: "Ground", type: "Power", notes: "System ground" },
+          { number: 9, name: "QS", label: "Serial Out S", type: "Output", notes: "Serial output on clock positive edge" },
+          { number: 10, name: "QS'", label: "Serial Out S'", type: "Output", notes: "Serial output on clock negative edge" },
+          { number: 11, name: "Q8", label: "Parallel Out 8", type: "Output", notes: "Parallel output bit 8" },
+          { number: 12, name: "Q7", label: "Parallel Out 7", type: "Output", notes: "Parallel output bit 7" },
+          { number: 13, name: "Q6", label: "Parallel Out 6", type: "Output", notes: "Parallel output bit 6" },
+          { number: 14, name: "Q5", label: "Parallel Out 5", type: "Output", notes: "Parallel output bit 5" },
+          { number: 15, name: "OUTPUT EN", label: "Output Enable", type: "Input", notes: "Active HIGH output enable" },
+          { number: 16, name: "VDD", label: "Supply Voltage", type: "Power", notes: "+3V to +18V Power rail" }
+        ],
+        applications: ["High-voltage LED/Relay drivers", "Remote control hold registers", "Industrial bus control"],
+        alternatives: ["74HC595", "HEF4094B"]
+      }
+    ];
+
+    const CIRCUIT_LIBRARY_DATA = [
+      {
+        id: "circ-bjt-relay",
+        title: "BJT Transistor Relay Driver with Flyback Diode",
+        componentId: "bc547",
+        category: "Switching",
+        difficulty: "Beginner",
+        description: "Safe logic-level relay activation circuit featuring base current limit and 1N4007 flyback suppression.",
+        bom: ["BC547 NPN Transistor", "1kΩ Resistor (1/4W)", "1N4007 Rectifier Diode", "5V Relay Coil", "Microcontroller GPIO"],
+        formula: "I_B = (V_GPIO - V_BE) / R_B = (3.3V - 0.7V) / 1000 = 2.6mA",
+        instructions: [
+          "Connect Microcontroller GPIO to 1kΩ Base resistor.",
+          "Connect resistor end to BC547 Base (Pin 2).",
+          "Connect BC547 Emitter (Pin 3) to GND.",
+          "Connect BC547 Collector (Pin 1) to Relay Coil (-) rail.",
+          "Place 1N4007 Diode across Relay Coil (Cathode to +5V, Anode to Collector)."
+        ]
+      },
+      {
+        id: "circ-555-flasher",
+        title: "555 Astable Square-Wave LED Flasher",
+        componentId: "ne555",
+        category: "Oscillators",
+        difficulty: "Beginner",
+        description: "Classic pulse oscillator generating ~1.5Hz clock signal driving a status LED.",
+        bom: ["NE555 Timer IC", "10kΩ Resistor R1", "47kΩ Resistor R2", "10µF Capacitor C1", "220Ω LED Resistor", "Red LED"],
+        formula: "f = 1.44 / ((R1 + 2*R2) * C1) = 1.44 / ((10k + 94k) * 10µF) = 1.38 Hz",
+        instructions: [
+          "Connect Pin 8 (VCC) & Pin 4 (RESET) to +9V rail.",
+          "Connect Pin 1 (GND) to Ground.",
+          "Place R1 (10k) between VCC and Pin 7.",
+          "Place R2 (47k) between Pin 7 and Pin 6.",
+          "Short Pin 6 and Pin 2 together.",
+          "Connect C1 (10µF) between Pin 2 and GND.",
+          "Connect Pin 3 (OUT) to LED via 220Ω resistor."
+        ]
+      },
+      {
+        id: "circ-7805-power",
+        title: "LM7805 Clean +5V Regulated Power Supply",
+        componentId: "lm7805",
+        category: "Power",
+        difficulty: "Beginner",
+        description: "Stable linear voltage regulator circuit with input smoothing and output high-frequency decoupling.",
+        bom: ["LM7805 Voltage Regulator", "0.33µF Ceramic Cap (C_in)", "0.1µF Ceramic Cap (C_out)", "100µF Electrolytic Cap", "9V-12V Power Source"],
+        formula: "P_dissipation = (V_IN - V_OUT) * I_LOAD = (12V - 5V) * 0.5A = 3.5 Watts",
+        instructions: [
+          "Connect DC input source (+9V to +15V) to LM7805 Pin 1 (IN).",
+          "Connect LM7805 Pin 2 (GND) to Power Supply Ground.",
+          "Connect Pin 3 (OUT) to target +5V Rail.",
+          "Place 0.33µF capacitor directly across Pin 1 and Pin 2.",
+          "Place 0.1µF capacitor directly across Pin 3 and Pin 2."
+        ]
+      }
+    ];
+
+    // --- MAIN REACT APPLICATION ---
+    function App() {
+      const [darkMode, setDarkMode] = useState(true);
+      const [activeTab, setActiveTab] = useState('catalog'); // 'catalog', 'detail', 'calculators', 'compare', 'circuits', 'admin', 'docs'
+      const [components, setComponents] = useState(FULL_DATASET);
+      const [selectedComponentId, setSelectedComponentId] = useState('bc547');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedCategory, setSelectedCategory] = useState('All');
+      const [selectedPackage, setSelectedPackage] = useState('All');
+      const [compareList, setCompareList] = useState(['bc547', 'ne555', 'lm7805']);
+      const [adminAuth, setAdminAuth] = useState(false);
+      const [pinoutOrientation, setPinoutOrientation] = useState('top'); // 'top' or 'bottom'
+      const [notification, setNotification] = useState('');
+      const [calculatorTab, setCalculatorTab] = useState('ohm'); // 'ohm', 'resistor', 'led', 'divider', 'colorcode', 'transformer'
+
+      // --- RESISTOR COLOR CODE STATE ---
+      const [resBandCount, setResBandCount] = useState(4); // 4, 5, 6
+      const [band1, setBand1] = useState('brown');
+      const [band2, setBand2] = useState('black');
+      const [band3, setBand3] = useState('red'); // used for 5 and 6 band
+      const [bandMultiplier, setBandMultiplier] = useState('red');
+      const [bandTolerance, setBandTolerance] = useState('gold');
+      const [bandTempCoeff, setBandTempCoeff] = useState('brown');
+
+      // COLOR CODE DATA MAP
+      const colorMap = {
+        black: { digit: 0, mult: 1, tol: null, tc: 250, hex: '#1e293b', textHex: '#ffffff' },
+        brown: { digit: 1, mult: 10, tol: 1, tc: 100, hex: '#78350f', textHex: '#ffffff' },
+        red: { digit: 2, mult: 100, tol: 2, tc: 50, hex: '#dc2626', textHex: '#ffffff' },
+        orange: { digit: 3, mult: 1000, tol: 0.05, tc: 15, hex: '#ea580c', textHex: '#ffffff' },
+        yellow: { digit: 4, mult: 10000, tol: 0.02, tc: 25, hex: '#eab308', textHex: '#000000' },
+        green: { digit: 5, mult: 100000, tol: 0.5, tc: 20, hex: '#16a34a', textHex: '#ffffff' },
+        blue: { digit: 6, mult: 1000000, tol: 0.25, tc: 10, hex: '#2563eb', textHex: '#ffffff' },
+        violet: { digit: 7, mult: 10000000, tol: 0.1, tc: 5, hex: '#9333ea', textHex: '#ffffff' },
+        grey: { digit: 8, mult: 100000000, tol: 0.01, tc: 1, hex: '#475569', textHex: '#ffffff' },
+        white: { digit: 9, mult: 1000000000, tol: null, tc: null, hex: '#f8fafc', textHex: '#000000' },
+        gold: { digit: null, mult: 0.1, tol: 5, tc: null, hex: '#d97706', textHex: '#ffffff' },
+        silver: { digit: null, mult: 0.01, tol: 10, tc: null, hex: '#94a3b8', textHex: '#000000' }
+      };
+
+      // CALCULATE RESISTOR VALUE
+      const resistorResult = useMemo(() => {
+        let val = 0;
+        if (resBandCount === 4) {
+          val = (colorMap[band1].digit * 10 + colorMap[band2].digit) * colorMap[bandMultiplier].mult;
+        } else {
+          val = (colorMap[band1].digit * 100 + colorMap[band2].digit * 10 + colorMap[band3].digit) * colorMap[bandMultiplier].mult;
+        }
+
+        const tolPct = colorMap[bandTolerance].tol || 5;
+        const minVal = val * (1 - tolPct / 100);
+        const maxVal = val * (1 + tolPct / 100);
+
+        let formatted = `${val} Ω`;
+        if (val >= 1000000) formatted = `${(val / 1000000).toFixed(2)} MΩ`;
+        else if (val >= 1000) formatted = `${(val / 1000).toFixed(2)} kΩ`;
+
+        let formattedMin = `${minVal.toFixed(1)} Ω`;
+        if (minVal >= 1000000) formattedMin = `${(minVal / 1000000).toFixed(2)} MΩ`;
+        else if (minVal >= 1000) formattedMin = `${(minVal / 1000).toFixed(2)} kΩ`;
+
+        let formattedMax = `${maxVal.toFixed(1)} Ω`;
+        if (maxVal >= 1000000) formattedMax = `${(maxVal / 1000000).toFixed(2)} MΩ`;
+        else if (maxVal >= 1000) formattedMax = `${(maxVal / 1000).toFixed(2)} kΩ`;
+
+        return {
+          raw: val,
+          formatted,
+          tolerance: tolPct,
+          minValFormatted: formattedMin,
+          maxValFormatted: formattedMax,
+          tempCoeff: resBandCount === 6 ? colorMap[bandTempCoeff].tc : null
+        };
+      }, [resBandCount, band1, band2, band3, bandMultiplier, bandTolerance, bandTempCoeff]);
+
+      // --- TRANSFORMER CALCULATOR STATE ---
+      const [txPrimaryV, setTxPrimaryV] = useState(220);
+      const [txSecondaryV, setTxSecondaryV] = useState(12);
+      const [txCoreArea, setTxCoreArea] = useState(6.25); // cm^2
+      const [txFreq, setTxFreq] = useState(50); // Hz
+      const [txFluxDensity, setTxFluxDensity] = useState(1.2); // Tesla
+
+      const transformerResult = useMemo(() => {
+        const v1 = parseFloat(txPrimaryV) || 0;
+        const v2 = parseFloat(txSecondaryV) || 0;
+        const area = parseFloat(txCoreArea) || 0;
+        const f = parseFloat(txFreq) || 50;
+        const b = parseFloat(txFluxDensity) || 1.2;
+
+        if (v1 <= 0 || v2 <= 0 || area <= 0) return null;
+
+        // Formula: Turns Per Volt (TPV) = 1 / (4.44 * f * B * Area_m2)
+        // Area in cm^2 -> Area_m2 = area / 10000
+        const areaM2 = area / 10000;
+        const tpv = 1 / (4.44 * f * b * areaM2);
+        
+        const n1 = Math.round(v1 * tpv);
+        const n2Base = v2 * tpv;
+        const n2Compensated = Math.round(n2Base * 1.05); // +5% for copper loss compensation
+        const ratio = (v1 / v2).toFixed(2);
+
+        // Power handling estimate based on core area: Power (VA) ≈ (Area_cm2 / 1.15)^2
+        const estimatedPowerVA = Math.pow(area / 1.15, 2);
+        const ip = (estimatedPowerVA / v1).toFixed(2);
+        const is = (estimatedPowerVA / v2).toFixed(2);
+
+        return {
+          tpv: tpv.toFixed(2),
+          n1,
+          n2Compensated,
+          ratio,
+          estimatedPowerVA: estimatedPowerVA.toFixed(1),
+          ip,
+          is
+        };
+      }, [txPrimaryV, txSecondaryV, txCoreArea, txFreq, txFluxDensity]);
+
+      // Lucide Icons initialization
+      useEffect(() => {
+        if (window.lucide) window.lucide.createIcons();
+      });
+
+      const notify = (msg) => {
+        setNotification(msg);
+        setTimeout(() => setNotification(''), 3500);
+      };
+
+      useEffect(() => {
+        if (darkMode) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('light');
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        }
+      }, [darkMode]);
+
+      const currentComponent = useMemo(() => {
+        return components.find(c => c.id === selectedComponentId) || components[0];
+      }, [components, selectedComponentId]);
+
+      const filteredComponents = useMemo(() => {
+        return components.filter(item => {
+          const q = searchQuery.toLowerCase();
+          const matchesQuery = searchQuery === '' || 
+            item.partNumber.toLowerCase().includes(q) ||
+            item.name.toLowerCase().includes(q) ||
+            item.tags.some(t => t.toLowerCase().includes(q));
+          const matchesCat = selectedCategory === 'All' || item.category === selectedCategory;
+          const matchesPkg = selectedPackage === 'All' || item.package === selectedPackage;
+          return matchesQuery && matchesCat && matchesPkg;
+        });
+      }, [components, searchQuery, selectedCategory, selectedPackage]);
+
+      const categories = ['All', ...new Set(components.map(c => c.category))];
+      const packages = ['All', ...new Set(components.map(c => c.package))];
+
+      const toggleCompare = (id) => {
+        if (compareList.includes(id)) {
+          setCompareList(compareList.filter(item => item !== id));
+          notify("Removed from comparison matrix.");
+        } else {
+          if (compareList.length >= 4) {
+            notify("Comparison limit reached (Max 4 parts).");
+            return;
+          }
+          setCompareList([...compareList, id]);
+          notify("Added component to comparison tool.");
+        }
+      };
+
+      return (
+        <div className={`min-h-screen ${darkMode ? 'dark bg-lab-bgDark text-slate-100 bg-grid-pattern' : 'light bg-slate-50 text-slate-900 bg-grid-pattern'}`}>
+          {/* HEADER / NAVIGATION */}
+          <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+            <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between font-mono">
+              <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('catalog')}>
+                <div className="bg-brand-600 text-white p-2 rounded-xl">
+                  <i data-lucide="cpu" className="w-5 h-5"></i>
+                </div>
+                <div>
+                  <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white">ElectroLib</span>
+                  <span className="text-[10px] block text-brand-500 font-medium">by Al-Nabiun</span>
+                </div>
+              </div>
+
+              {/* DESKTOP NAV */}
+              <nav className="hidden md:flex items-center gap-1 text-xs font-semibold">
+                <button onClick={() => setActiveTab('catalog')} className={`px-3 py-2 rounded-lg transition ${activeTab === 'catalog' || activeTab === 'detail' ? 'bg-brand-500/10 text-brand-500' : 'text-slate-400 hover:text-slate-200'}`}>
+                  Components
+                </button>
+                <button onClick={() => setActiveTab('calculators')} className={`px-3 py-2 rounded-lg transition ${activeTab === 'calculators' ? 'bg-brand-500/10 text-brand-500' : 'text-slate-400 hover:text-slate-200'}`}>
+                  Calculators
+                </button>
+                <button onClick={() => setActiveTab('compare')} className={`px-3 py-2 rounded-lg transition ${activeTab === 'compare' ? 'bg-brand-500/10 text-brand-500' : 'text-slate-400 hover:text-slate-200'}`}>
+                  Compare
+                </button>
+                <button onClick={() => setActiveTab('circuits')} className={`px-3 py-2 rounded-lg transition ${activeTab === 'circuits' ? 'bg-brand-500/10 text-brand-500' : 'text-slate-400 hover:text-slate-200'}`}>
+                  Circuits
+                </button>
+                <button onClick={() => setActiveTab('admin')} className={`px-3 py-2 rounded-lg transition ${activeTab === 'admin' ? 'bg-brand-500/10 text-brand-500' : 'text-slate-400 hover:text-slate-200'}`}>
+                  Admin
+                </button>
+                <button onClick={() => setActiveTab('docs')} className={`px-3 py-2 rounded-lg transition ${activeTab === 'docs' ? 'bg-brand-500/10 text-brand-500' : 'text-slate-400 hover:text-slate-200'}`}>
+                  API Docs
+                </button>
+              </nav>
+
+              <div className="flex items-center gap-2">
+                <button onClick={() => setDarkMode(!darkMode)} className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                  {darkMode ? <i data-lucide="sun" className="w-4 h-4"></i> : <i data-lucide="moon" className="w-4 h-4"></i>}
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* NOTIFICATION TOAST */}
+          {notification && (
+            <div className="fixed bottom-4 right-4 z-50 bg-slate-900 border border-brand-500/40 text-brand-400 px-4 py-2.5 rounded-xl shadow-xl font-mono text-xs flex items-center gap-2 animate-bounce">
+              <i data-lucide="info" className="w-4 h-4"></i>
+              {notification}
+            </div>
+          )}
+
+          {/* MAIN CONTAINER */}
+          <main className="max-w-7xl mx-auto px-4 py-8">
+            {/* VIEW 1: COMPONENT CATALOG */}
+            {activeTab === 'catalog' && (
+              <div className="space-y-6">
+                {/* HERO BANNER */}
+                <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-brand-950/40 p-6 md:p-8 rounded-2xl border border-slate-800 relative overflow-hidden">
+                  <div className="max-w-2xl space-y-3 relative z-10">
+                    <span className="text-xs font-mono text-brand-400 bg-brand-500/10 px-2.5 py-1 rounded-md border border-brand-500/20">
+                      Open-Source Reference Engine
+                    </span>
+                    <h1 className="text-2xl md:text-3xl font-extrabold font-mono text-white tracking-tight">
+                      Your Electronics Knowledge, All in One Place.
+                    </h1>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      Search electronic components, inspect pinouts, verify maximum absolute ratings, calculate values, and explore reference circuit designs.
+                    </p>
+                  </div>
+                </div>
+
+                {/* SEARCH & FILTERS BAR */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 font-mono text-xs">
+                  <div className="md:col-span-2 relative">
+                    <i data-lucide="search" className="w-4 h-4 absolute left-3 top-3 text-slate-500"></i>
+                    <input
+                      type="text"
+                      placeholder="Search parts, tags, part numbers (e.g. BC547, 74HC595, NE555)..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      className="w-full bg-white dark:bg-slate-900 pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 focus:outline-none focus:border-brand-500 text-slate-900 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <select
+                      value={selectedCategory}
+                      onChange={e => setSelectedCategory(e.target.value)}
+                      className="w-full bg-white dark:bg-slate-900 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"
+                    >
+                      {categories.map(c => <option key={c} value={c}>Category: {c}</option>)}
+                    </select>
+                  </div>
+
+                  <div>
+                    <select
+                      value={selectedPackage}
+                      onChange={e => setSelectedPackage(e.target.value)}
+                      className="w-full bg-white dark:bg-slate-900 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"
+                    >
+                      {packages.map(p => <option key={p} value={p}>Package: {p}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                {/* COMPONENT CARDS GRID */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredComponents.map(item => (
+                    <div
+                      key={item.id}
+                      className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 transition duration-200 flex flex-col justify-between space-y-4 group"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                              {item.category}
+                            </span>
+                            <h3 className="text-lg font-mono font-bold text-slate-900 dark:text-white mt-1 group-hover:text-brand-500 transition">
+                              {item.partNumber}
+                            </h3>
+                          </div>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            {item.status}
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{item.name}</p>
+
+                        <div className="flex flex-wrap gap-1 font-mono text-[10px]">
+                          <span className="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-600 dark:text-slate-400">Pkg: {item.package}</span>
+                          <span className="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-600 dark:text-slate-400">Pins: {item.pinsCount}</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2 font-mono text-xs">
+                        <button
+                          onClick={() => {
+                            setSelectedComponentId(item.id);
+                            setActiveTab('detail');
+                          }}
+                          className="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg font-semibold transition"
+                        >
+                          View Specs
+                        </button>
+                        <button
+                          onClick={() => toggleCompare(item.id)}
+                          className={`p-2 rounded-lg border transition ${compareList.includes(item.id) ? 'border-brand-500 bg-brand-500/10 text-brand-500' : 'border-slate-200 dark:border-slate-800 text-slate-400 hover:bg-slate-800'}`}
+                        >
+                          <i data-lucide="columns" className="w-4 h-4"></i>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 2: COMPONENT DETAIL VIEW */}
+            {activeTab === 'detail' && (
+              <div className="space-y-6">
+                <button
+                  onClick={() => setActiveTab('catalog')}
+                  className="font-mono text-xs text-brand-500 hover:underline flex items-center gap-1"
+                >
+                  <i data-lucide="arrow-left" className="w-4 h-4"></i> Back to Catalog
+                </button>
+
+                <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 space-y-6">
+                  {/* DETAIL HEADER */}
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
+                    <div>
+                      <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
+                        <span>{currentComponent.category}</span>
+                        <span>•</span>
+                        <span>{currentComponent.manufacturer}</span>
+                      </div>
+                      <h1 className="text-3xl font-bold font-mono text-slate-900 dark:text-white mt-1">
+                        {currentComponent.partNumber}
+                      </h1>
+                      <p className="text-xs text-slate-400 mt-1 max-w-2xl">{currentComponent.name}</p>
+                    </div>
+
+                    <a
+                      href={currentComponent.datasheetUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="bg-brand-600 hover:bg-brand-700 text-white font-mono text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 self-start md:self-auto"
+                    >
+                      <i data-lucide="file-text" className="w-4 h-4"></i> Official Datasheet PDF
+                    </a>
+                  </div>
+
+                  {/* PINOUT & SPECS GRID */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* PINOUT TABLE */}
+                    <div className="space-y-3 font-mono">
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Pin Configuration</h2>
+                        <div className="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-[10px]">
+                          <button
+                            onClick={() => setPinoutOrientation('top')}
+                            className={`px-2 py-1 rounded ${pinoutOrientation === 'top' ? 'bg-brand-600 text-white' : 'text-slate-400'}`}
+                          >
+                            Top View
+                          </button>
+                          <button
+                            onClick={() => setPinoutOrientation('bottom')}
+                            className={`px-2 py-1 rounded ${pinoutOrientation === 'bottom' ? 'bg-brand-600 text-white' : 'text-slate-400'}`}
+                          >
+                            Bottom View
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl">
+                        <table className="w-full text-xs">
+                          <thead className="bg-slate-100 dark:bg-slate-800 text-slate-400 border-b border-slate-200 dark:border-slate-800">
+                            <tr>
+                              <th className="p-2.5 text-left">Pin #</th>
+                              <th className="p-2.5 text-left">Name</th>
+                              <th className="p-2.5 text-left">Label</th>
+                              <th className="p-2.5 text-left">Notes</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {currentComponent.pins.map(p => (
+                              <tr key={p.number} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                <td className="p-2.5 font-bold text-brand-500">{p.number}</td>
+                                <td className="p-2.5 font-bold text-slate-900 dark:text-white">{p.name}</td>
+                                <td className="p-2.5 text-slate-400">{p.label}</td>
+                                <td className="p-2.5 text-slate-500 text-[11px]">{p.notes}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* SPECS TABLE */}
+                    <div className="space-y-3 font-mono">
+                      <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Electrical Specifications</h2>
+                      <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                        <table className="w-full text-xs">
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {Object.entries(currentComponent.specs).map(([key, val]) => (
+                              <tr key={key}>
+                                <td className="p-2.5 font-semibold text-slate-400 capitalize bg-slate-50 dark:bg-slate-800/30 w-1/2">
+                                  {key.replace(/([A-Z])/g, ' $1').trim()}
+                                </td>
+                                <td className="p-2.5 font-bold text-slate-900 dark:text-white">{val}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 3: ELECTRONICS CALCULATORS */}
+            {activeTab === 'calculators' && (
+              <div className="space-y-6">
+                <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
+                  <h1 className="text-2xl font-bold font-mono">Engineering Calculators Suite</h1>
+                  <p className="text-xs text-slate-500">Precision electronic solvers with dynamic calculations and unit conversions.</p>
+                </div>
+
+                <div className="flex border-b border-slate-200 dark:border-slate-800 gap-2 overflow-x-auto text-xs font-mono">
+                  <button onClick={() => setCalculatorTab('ohm')} className={`pb-2 px-3 whitespace-nowrap ${calculatorTab === 'ohm' ? 'border-b-2 border-brand-500 text-brand-500 font-bold' : 'text-slate-400'}`}>Ohm's Law</button>
+                  <button onClick={() => setCalculatorTab('colorcode')} className={`pb-2 px-3 whitespace-nowrap ${calculatorTab === 'colorcode' ? 'border-b-2 border-brand-500 text-brand-500 font-bold' : 'text-slate-400'}`}>Resistor Color Code</button>
+                  <button onClick={() => setCalculatorTab('drop')} className={`pb-2 px-3 whitespace-nowrap ${calculatorTab === 'drop' ? 'border-b-2 border-brand-500 text-brand-500 font-bold' : 'text-slate-400'}`}>Voltage Drop / Step Resistor</button>
+                  <button onClick={() => setCalculatorTab('transformer')} className={`pb-2 px-3 whitespace-nowrap ${calculatorTab === 'transformer' ? 'border-b-2 border-brand-500 text-brand-500 font-bold' : 'text-slate-400'}`}>Transformer Winding / Turns</button>
+                  <button onClick={() => setCalculatorTab('led')} className={`pb-2 px-3 whitespace-nowrap ${calculatorTab === 'led' ? 'border-b-2 border-brand-500 text-brand-500 font-bold' : 'text-slate-400'}`}>LED Series Resistor</button>
+                  <button onClick={() => setCalculatorTab('divider')} className={`pb-2 px-3 whitespace-nowrap ${calculatorTab === 'divider' ? 'border-b-2 border-brand-500 text-brand-500 font-bold' : 'text-slate-400'}`}>Voltage Divider</button>
+                </div>
+
+                {/* CALCULATOR 1: OHM'S LAW */}
+                {calculatorTab === 'ohm' && (
+                  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-xl space-y-4">
+                    <h2 className="font-mono font-bold text-base text-brand-500">Ohm's Law & Power Solver</h2>
+                    <div className="grid grid-cols-2 gap-3 font-mono text-xs">
+                      <div>
+                        <label className="text-slate-400">Voltage (V)</label>
+                        <input id="calc-v" type="number" placeholder="5" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700 mt-1" />
+                      </div>
+                      <div>
+                        <label className="text-slate-400">Resistance (Ω)</label>
+                        <input id="calc-r" type="number" placeholder="220" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700 mt-1" />
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const v = parseFloat(document.getElementById('calc-v').value);
+                        const r = parseFloat(document.getElementById('calc-r').value);
+                        if (v && r) {
+                          const i = v / r;
+                          const p = v * i;
+                          notify(`Current (I): ${(i*1000).toFixed(2)} mA | Power (P): ${p.toFixed(3)} W`);
+                        }
+                      }}
+                      className="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-mono py-2 rounded-lg"
+                    >
+                      Calculate Current & Power
+                    </button>
+                  </div>
+                )}
+
+                {/* CALCULATOR 2: RESISTOR COLOR CODE */}
+                {calculatorTab === 'colorcode' && (
+                  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-6 max-w-3xl">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+                      <div>
+                        <h2 className="font-mono font-bold text-lg text-brand-500">Resistor Color Code Calculator (রেজিস্টরের কালার কোড)</h2>
+                        <p className="text-xs text-slate-400">Select band colors to calculate accurate resistance and tolerance values.</p>
+                      </div>
+                      <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg text-xs font-mono">
+                        {[4, 5, 6].map(b => (
+                          <button
+                            key={b}
+                            onClick={() => setResBandCount(b)}
+                            className={`px-3 py-1 rounded ${resBandCount === b ? 'bg-brand-600 text-white font-bold' : 'text-slate-400'}`}
+                          >
+                            {b} Bands
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* DYNAMIC RESISTOR SVG */}
+                    <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 flex flex-col items-center justify-center space-y-3">
+                      <svg className="w-full max-w-md h-24" viewBox="0 0 320 80">
+                        {/* Leads */}
+                        <line x1="0" y1="40" x2="60" y2="40" stroke="#94a3b8" strokeWidth="6" strokeLinecap="round" />
+                        <line x1="260" y1="40" x2="320" y2="40" stroke="#94a3b8" strokeWidth="6" strokeLinecap="round" />
+                        {/* Body */}
+                        <path d="M 60 20 Q 80 15 100 20 L 220 20 Q 240 15 260 20 L 260 60 Q 240 65 220 60 L 100 60 Q 80 65 60 60 Z" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="2" />
+                        
+                        {/* Band 1 */}
+                        <rect x="85" y="17" width="12" height="46" fill={colorMap[band1].hex} rx="1" />
+                        {/* Band 2 */}
+                        <rect x="115" y="18" width="12" height="44" fill={colorMap[band2].hex} rx="1" />
+                        
+                        {/* Band 3 (5/6 Bands) */}
+                        {resBandCount >= 5 && (
+                          <rect x="145" y="18" width="12" height="44" fill={colorMap[band3].hex} rx="1" />
+                        )}
+
+                        {/* Multiplier Band */}
+                        <rect x={resBandCount >= 5 ? 175 : 155} y="18" width="12" height="44" fill={colorMap[bandMultiplier].hex} rx="1" />
+                        
+                        {/* Tolerance Band */}
+                        <rect x={resBandCount >= 5 ? 205 : 195} y="18" width="12" height="44" fill={colorMap[bandTolerance].hex} rx="1" />
+
+                        {/* Temp Coeff Band (6 Bands) */}
+                        {resBandCount === 6 && (
+                          <rect x="230" y="17" width="12" height="46" fill={colorMap[bandTempCoeff].hex} rx="1" />
+                        )}
+                      </svg>
+
+                      {/* DISPLAY RESULT */}
+                      <div className="text-center font-mono">
+                        <div className="text-3xl font-extrabold text-brand-400">{resistorResult.formatted}</div>
+                        <div className="text-xs text-slate-400 mt-1">
+                          Tolerance: <span className="text-amber-400 font-bold">±{resistorResult.tolerance}%</span> ({resistorResult.minValFormatted} - {resistorResult.maxValFormatted})
+                          {resistorResult.tempCoeff && (
+                            <span className="ml-3 text-cyan-400">Temp Coeff: {resistorResult.tempCoeff} ppm/K</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* BAND SELECTORS GRID */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 font-mono text-xs">
+                      <div>
+                        <label className="text-slate-400 font-bold block mb-1">1st Digit Band</label>
+                        <select value={band1} onChange={e => setBand1(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700">
+                          {Object.keys(colorMap).filter(c => colorMap[c].digit !== null).map(c => (
+                            <option key={c} value={c}>{c.toUpperCase()} ({colorMap[c].digit})</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-slate-400 font-bold block mb-1">2nd Digit Band</label>
+                        <select value={band2} onChange={e => setBand2(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700">
+                          {Object.keys(colorMap).filter(c => colorMap[c].digit !== null).map(c => (
+                            <option key={c} value={c}>{c.toUpperCase()} ({colorMap[c].digit})</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {resBandCount >= 5 && (
+                        <div>
+                          <label className="text-slate-400 font-bold block mb-1">3rd Digit Band</label>
+                          <select value={band3} onChange={e => setBand3(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700">
+                            {Object.keys(colorMap).filter(c => colorMap[c].digit !== null).map(c => (
+                              <option key={c} value={c}>{c.toUpperCase()} ({colorMap[c].digit})</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      <div>
+                        <label className="text-slate-400 font-bold block mb-1">Multiplier Band</label>
+                        <select value={bandMultiplier} onChange={e => setBandMultiplier(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700">
+                          {Object.keys(colorMap).map(c => (
+                            <option key={c} value={c}>{c.toUpperCase()} (x{colorMap[c].mult})</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-slate-400 font-bold block mb-1">Tolerance Band</label>
+                        <select value={bandTolerance} onChange={e => setBandTolerance(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700">
+                          {Object.keys(colorMap).filter(c => colorMap[c].tol !== null).map(c => (
+                            <option key={c} value={c}>{c.toUpperCase()} (±{colorMap[c].tol}%)</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {resBandCount === 6 && (
+                        <div>
+                          <label className="text-slate-400 font-bold block mb-1">Temp Coeff (ppm/K)</label>
+                          <select value={bandTempCoeff} onChange={e => setBandTempCoeff(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700">
+                            {Object.keys(colorMap).filter(c => colorMap[c].tc !== null).map(c => (
+                              <option key={c} value={c}>{c.toUpperCase()} ({colorMap[c].tc} ppm/K)</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* CALCULATOR 3: VOLTAGE STEPPING / DROPPING RESISTOR */}
+                {calculatorTab === 'drop' && (
+                  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-5 max-w-2xl font-mono">
+                    <div>
+                      <h2 className="font-bold text-lg text-brand-500">Voltage Drop & Load Resistor Calculator (ভোল্টেজ ড্রপ রেজিস্টর)</h2>
+                      <p className="text-xs text-slate-400">Determine series resistor value required to power 3.3V, 5V, or custom devices from higher supply voltages (6V, 9V, 12V, 24V, 48V).</p>
+                    </div>
+
+                    {/* PRESET BUTTONS */}
+                    <div className="space-y-2">
+                      <span className="text-xs text-slate-400 font-bold">Quick Supply Presets (সোর্স ভোল্টেজ নির্বাচন):</span>
+                      <div className="flex flex-wrap gap-2 text-xs">
+                        {[6, 9, 12, 24, 48].map(v => (
+                          <button
+                            key={v}
+                            onClick={() => {
+                              document.getElementById('drop-vin').value = v;
+                            }}
+                            className="bg-slate-100 dark:bg-slate-800 hover:bg-brand-600 hover:text-white px-3 py-1 rounded border border-slate-700 transition"
+                          >
+                            {v}V Supply
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                      <div>
+                        <label className="text-slate-400 block mb-1">Source Vin (V)</label>
+                        <input id="drop-vin" type="number" defaultValue="12" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700" />
+                      </div>
+                      <div>
+                        <label className="text-slate-400 block mb-1">Target Device Vout (V)</label>
+                        <input id="drop-vout" type="number" defaultValue="5" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700" />
+                      </div>
+                      <div>
+                        <label className="text-slate-400 block mb-1">Load Current (mA)</label>
+                        <input id="drop-il" type="number" defaultValue="100" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700" />
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        const vin = parseFloat(document.getElementById('drop-vin').value);
+                        const vout = parseFloat(document.getElementById('drop-vout').value);
+                        const ilMa = parseFloat(document.getElementById('drop-il').value);
+
+                        if (vin <= vout) {
+                          notify("Source Vin must be greater than Target Vout!");
+                          return;
+                        }
+                        if (ilMa <= 0) {
+                          notify("Current must be greater than 0 mA!");
+                          return;
+                        }
+
+                        const iAmp = ilMa / 1000;
+                        const vDrop = vin - vout;
+                        const rExact = vDrop / iAmp;
+                        const pWatt = vDrop * iAmp;
+
+                        notify(`Resistor: ${rExact.toFixed(1)} Ω | Power Rating: ${pWatt.toFixed(2)} W ${pWatt > 0.25 ? '⚠️ High Wattage Resistor Required!' : '✅ Safe for 1/4W'}`);
+                      }}
+                      className="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-lg font-bold"
+                    >
+                      Calculate Resistor & Power Rating
+                    </button>
+
+                    <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs space-y-2">
+                      <div className="text-slate-400 font-bold uppercase tracking-wider">Formula Used (সূত্র):</div>
+                      <div className="text-brand-400 font-mono">R = (Vin - Vout) / I_load</div>
+                      <div className="text-amber-400 font-mono">P_dissipation = (Vin - Vout) × I_load</div>
+                      <div className="text-slate-500 text-[11px] leading-relaxed">
+                        Note: Always choose a resistor with at least 2x the calculated wattage rating for thermal longevity and safety.
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* CALCULATOR 4: TRANSFORMER TURNS & WINDING */}
+                {calculatorTab === 'transformer' && (
+                  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-6 max-w-3xl font-mono">
+                    <div>
+                      <h2 className="font-bold text-lg text-brand-500">Transformer Turns Ratio & Winding Calculator (ট্রান্সফরমার প্যাচ / টার্নস)</h2>
+                      <p className="text-xs text-slate-400">Calculate Turns Per Volt (TPV), Primary turns (N1), Secondary turns (N2 with loss compensation), and estimated power handling.</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                      <div>
+                        <label className="text-slate-400 block mb-1">Primary Voltage V1 (V)</label>
+                        <input type="number" value={txPrimaryV} onChange={e => setTxPrimaryV(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700" />
+                      </div>
+
+                      <div>
+                        <label className="text-slate-400 block mb-1">Secondary Voltage V2 (V)</label>
+                        <input type="number" value={txSecondaryV} onChange={e => setTxSecondaryV(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700" />
+                      </div>
+
+                      <div>
+                        <label className="text-slate-400 block mb-1">Core Area (cm²)</label>
+                        <input type="number" value={txCoreArea} onChange={e => setTxCoreArea(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700" />
+                      </div>
+
+                      <div>
+                        <label className="text-slate-400 block mb-1">Frequency (Hz)</label>
+                        <input type="number" value={txFreq} onChange={e => setTxFreq(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700" />
+                      </div>
+
+                      <div>
+                        <label className="text-slate-400 block mb-1">Flux Density B (Tesla)</label>
+                        <input type="number" step="0.1" value={txFluxDensity} onChange={e => setTxFluxDensity(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700" />
+                      </div>
+                    </div>
+
+                    {transformerResult && (
+                      <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3 text-xs">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                          <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                            <span className="text-slate-400 text-[10px] block">Turns Per Volt</span>
+                            <span className="text-brand-400 font-extrabold text-lg">{transformerResult.tpv}</span>
+                          </div>
+
+                          <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                            <span className="text-slate-400 text-[10px] block">Primary Turns (N1)</span>
+                            <span className="text-emerald-400 font-extrabold text-lg">{transformerResult.n1} Turns</span>
+                          </div>
+
+                          <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                            <span className="text-slate-400 text-[10px] block">Secondary Turns (+5%)</span>
+                            <span className="text-amber-400 font-extrabold text-lg">{transformerResult.n2Compensated} Turns</span>
+                          </div>
+
+                          <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                            <span className="text-slate-400 text-[10px] block">Estimated Power</span>
+                            <span className="text-cyan-400 font-extrabold text-lg">{transformerResult.estimatedPowerVA} VA</span>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-slate-800 pt-3 text-slate-300 space-y-1">
+                          <div>• Turns Ratio (N1 : N2): <span className="font-bold text-white">{transformerResult.ratio} : 1</span></div>
+                          <div>• Full Load Primary Current (I1): <span className="font-bold text-white">{transformerResult.ip} A</span></div>
+                          <div>• Full Load Secondary Current (I2): <span className="font-bold text-white">{transformerResult.is} A</span></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* CALCULATOR 5: LED SERIES RESISTOR */}
+                {calculatorTab === 'led' && (
+                  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-xl space-y-4">
+                    <h2 className="font-mono font-bold text-base text-brand-500">LED Current-Limiting Resistor</h2>
+                    <div className="grid grid-cols-3 gap-2 font-mono text-xs">
+                      <div>
+                        <label className="text-slate-400">Supply Vs (V)</label>
+                        <input id="led-vs" type="number" defaultValue="5" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700 mt-1" />
+                      </div>
+                      <div>
+                        <label className="text-slate-400">LED Vf (V)</label>
+                        <input id="led-vf" type="number" defaultValue="2.0" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700 mt-1" />
+                      </div>
+                      <div>
+                        <label className="text-slate-400">Current If (mA)</label>
+                        <input id="led-if" type="number" defaultValue="20" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700 mt-1" />
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const vs = parseFloat(document.getElementById('led-vs').value);
+                        const vf = parseFloat(document.getElementById('led-vf').value);
+                        const ifMa = parseFloat(document.getElementById('led-if').value);
+                        if (vs > vf && ifMa > 0) {
+                          const r = (vs - vf) / (ifMa / 1000);
+                          const p = Math.pow((ifMa / 1000), 2) * r;
+                          notify(`Required Resistor: ${r.toFixed(1)} Ω | Min Rating: ${p.toFixed(3)} W`);
+                        }
+                      }}
+                      className="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-mono py-2 rounded-lg"
+                    >
+                      Calculate Resistor
+                    </button>
+                  </div>
+                )}
+
+                {/* CALCULATOR 6: VOLTAGE DIVIDER */}
+                {calculatorTab === 'divider' && (
+                  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-xl space-y-4">
+                    <h2 className="font-mono font-bold text-base text-brand-500">Voltage Divider Calculator</h2>
+                    <div className="grid grid-cols-3 gap-2 font-mono text-xs">
+                      <div>
+                        <label className="text-slate-400">Vin (V)</label>
+                        <input id="div-vin" type="number" defaultValue="12" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700 mt-1" />
+                      </div>
+                      <div>
+                        <label className="text-slate-400">R1 (Ω)</label>
+                        <input id="div-r1" type="number" defaultValue="10000" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700 mt-1" />
+                      </div>
+                      <div>
+                        <label className="text-slate-400">R2 (Ω)</label>
+                        <input id="div-r2" type="number" defaultValue="4700" className="w-full bg-slate-100 dark:bg-slate-800 p-2 rounded border border-slate-700 mt-1" />
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const vin = parseFloat(document.getElementById('div-vin').value);
+                        const r1 = parseFloat(document.getElementById('div-r1').value);
+                        const r2 = parseFloat(document.getElementById('div-r2').value);
+                        if (vin && r1 && r2) {
+                          const vout = vin * (r2 / (r1 + r2));
+                          notify(`Output Voltage (Vout): ${vout.toFixed(2)} V`);
+                        }
+                      }}
+                      className="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-mono py-2 rounded-lg"
+                    >
+                      Calculate Vout
+                    </button>
+                  </div>
+                )}
+
+              </div>
+            )}
+
+            {/* VIEW 4: COMPONENT COMPARISON */}
+            {activeTab === 'compare' && (
+              <div className="space-y-6">
+                <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
+                  <h1 className="text-2xl font-bold font-mono">Component Comparison Matrix</h1>
+                  <p className="text-xs text-slate-500">Compare up to 4 components side by side.</p>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 font-mono text-xs">
+                    <thead className="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                      <tr>
+                        <th className="p-4 text-left w-48">Spec Parameter</th>
+                        {compareList.map(id => {
+                          const comp = components.find(c => c.id === id);
+                          return (
+                            <th key={id} className="p-4 text-left min-w-[180px]">
+                              <div className="font-bold text-brand-500 text-sm">{comp?.partNumber}</div>
+                              <div className="text-[10px] text-slate-400 font-normal">{comp?.category}</div>
+                            </th>
+                          );
+                        })}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                      <tr>
+                        <td className="p-4 font-bold text-slate-400">Package</td>
+                        {compareList.map(id => <td key={id} className="p-4">{components.find(c => c.id === id)?.package}</td>)}
+                      </tr>
+                      <tr>
+                        <td className="p-4 font-bold text-slate-400">Status</td>
+                        {compareList.map(id => <td key={id} className="p-4 text-emerald-400">{components.find(c => c.id === id)?.status}</td>)}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 5: CIRCUIT LIBRARY */}
+            {activeTab === 'circuits' && (
+              <div className="space-y-6">
+                <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
+                  <h1 className="text-2xl font-bold font-mono">Practical Circuit Library</h1>
+                  <p className="text-xs text-slate-500">Tested reference circuits with bill of materials.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {CIRCUIT_LIBRARY_DATA.map(circ => (
+                    <div key={circ.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                      <div>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-500/10 text-brand-500 border border-brand-500/20 font-bold">
+                          {circ.category}
+                        </span>
+                        <h3 className="text-base font-mono font-bold mt-2 text-slate-900 dark:text-white">{circ.title}</h3>
+                        <p className="text-xs text-slate-400 mt-1">{circ.description}</p>
+                      </div>
+
+                      <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-100 dark:border-slate-800 font-mono text-[11px]">
+                        <span className="text-slate-400 font-bold block mb-1">Formula:</span>
+                        <span className="text-brand-400">{circ.formula}</span>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          setSelectedComponentId(circ.componentId);
+                          setActiveTab('detail');
+                        }}
+                        className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-mono py-2 rounded-lg transition"
+                      >
+                        View Related Part
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 6: ADMIN */}
+            {activeTab === 'admin' && (
+              <div className="space-y-6 max-w-2xl mx-auto">
+                <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 font-mono text-xs">
+                  <h2 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="shield-check" className="w-5 h-5 text-brand-500"></i>
+                    Admin Portal & Data Export
+                  </h2>
+                  <p className="text-slate-400">Export database entries or manage verified data status.</p>
+
+                  <button
+                    onClick={() => {
+                      const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(components, null, 2))}`;
+                      const downloadAnchor = document.createElement('a');
+                      downloadAnchor.setAttribute("href", jsonString);
+                      downloadAnchor.setAttribute("download", "electrolib_data.json");
+                      document.body.appendChild(downloadAnchor);
+                      downloadAnchor.click();
+                      downloadAnchor.remove();
+                      notify("Downloaded electrolib_data.json");
+                    }}
+                    className="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg font-bold"
+                  >
+                    Export Database (JSON)
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 7: API DOCS */}
+            {activeTab === 'docs' && (
+              <div className="space-y-6 max-w-3xl mx-auto">
+                <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 font-mono text-xs space-y-3">
+                  <h1 className="text-lg font-bold text-slate-900 dark:text-white">REST API Reference</h1>
+                  <p className="text-slate-400">Endpoints provided by ElectroLib backend service.</p>
+                  
+                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                    <span className="text-emerald-400 font-bold mr-2">GET</span>
+                    <code>/api/v1/components</code>
+                  </div>
+                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                    <span className="text-emerald-400 font-bold mr-2">GET</span>
+                    <code>/api/v1/components/&lt;partNumber&gt;</code>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </main>
+
+          {/* FOOTER */}
+          <footer className="mt-12 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center font-mono text-xs text-slate-500">
+            <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-2">
+              <div>ElectroLib Platform — Open-Source Electronics Database by Al-Nabiun</div>
+              <div>MIT License • Built for Electronics Engineers</div>
+            </div>
+          </footer>
+
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
